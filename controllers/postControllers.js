@@ -1,6 +1,6 @@
 const posts = require('../models/postModel')
 
-// Create Post
+
 exports.createPost = async (req, res) => {
     try {
         const { title, content, category, tags } = req.body;
@@ -23,7 +23,7 @@ exports.createPost = async (req, res) => {
     }
 };
 
-// Get All Posts
+
 exports.getAllPosts = async (req, res) => {
     try {
         const allPosts = await posts.find();
@@ -33,7 +33,7 @@ exports.getAllPosts = async (req, res) => {
     }
 };
 
-// Get Single Post
+
 exports.getPostById = async (req, res) => {
     const id = req.params.id;
     if (!id) {
@@ -50,7 +50,7 @@ exports.getPostById = async (req, res) => {
     }
 };
 
-// Update Post
+
 exports.updatePost = async (req, res) => {
     console.log("Inside updatePost");
     const { id } = req.params
@@ -75,13 +75,13 @@ exports.updatePost = async (req, res) => {
         );
         res.status(200).json("Post Updation Successfull!!");
     } catch (error) {
-        res.status(401).json(error);
+        res.status(500).json(error);
     }
 };
 
 
 
-// Delete Post
+
 exports.removePost = async (req, res) => {
     console.log("Inside removePostController");
     const { id } = req.params
@@ -92,47 +92,42 @@ exports.removePost = async (req, res) => {
         const deletedPost = await posts.findOneAndDelete({ _id: id })
         res.status(200).json("Post Deleted Successfully")
     } catch (error) {
-        res.status(401).json(error)
+        res.status(500).json(error)
     }
 }
 
 exports.featuredPost = async (req, res) => {
     console.log("Inside featuredPostController");
     try {
-        const featuresPosts = await posts.aggregate([
-            { $sample: { size: 3 } }
-        ])
+        const featuresPosts = await posts.limit(9)
         res.status(200).json(featuresPosts)
     } catch (error) {
-        res.status(401).json(error)
+        res.status(500).json(error)
     }
 }
 
 exports.likePost = async (req, res) => {
     try {
       const { postId } = req.params;
-      const userId = req.userId; // Assuming userId is extracted from auth middleware
-  
-      // Check if the post exists
+      const userId = req.userId; 
+
       const post = await posts.findById(postId);
       if (!post) {
-        return res.status(404).json({ error: "Post not found" });
+        return res.status(404).json("Post not found");
       }
-  
-      // Check if the user already liked the post
+
       const alreadyLiked = post.likes.includes(userId);
       if (alreadyLiked) {
-        return res.status(400).json({ error: "You already liked this post" });
+        return res.status(409).json("You already liked this post");
       }
   
-      // Add the like
       post.likes.push(userId);
       await post.save();
   
-      res.status(200).json({ message: "Post liked successfully", post });
+      res.status(200).json("Post liked successfully");
     } catch (error) {
       console.error("Error liking post:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json("Internal server error");
     }
 };
   
@@ -143,23 +138,16 @@ exports.unlikePost = async (req, res) => {
   
       const post = await posts.findById(postId);
       if (!post) {
-        return res.status(404).json({ error: "Post not found" });
+        return res.status(404).json("Post not found");
       }
-  
-      // Check if the user has liked the post
-      const likeIndex = post.likes.indexOf(userId);
-      if (likeIndex === -1) {
-        return res.status(400).json({ error: "You have not liked this post" });
-      }
-  
-      // Remove the like
+
       post.likes.splice(likeIndex, 1);
       await post.save();
   
-      res.status(200).json({ message: "Post unliked successfully", post });
+      res.status(200).json("Post unliked successfully");
     } catch (error) {
       console.error("Error unliking post:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json("Internal server error");
     }
 };
   
@@ -170,15 +158,14 @@ exports.addComment = async (req, res) => {
       const userId = req.userId;
   
       if (!comment) {
-        return res.status(400).json({ error: "Comment cannot be empty" });
+        return res.status(400).json("Comment cannot be empty");
       }
   
       const post = await posts.findById(postId);
       if (!post) {
-        return res.status(404).json({ error: "Post not found" });
+        return res.status(404).json("Post not found");
       }
   
-      // Add the comment
       post.comments.push({
         user: userId,
         comment,
@@ -186,10 +173,10 @@ exports.addComment = async (req, res) => {
   
       await post.save();
   
-      res.status(201).json({ message: "Comment added successfully", post });
+      res.status(201).json("Comment added successfully");
     } catch (error) {
       console.error("Error adding comment:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json("Internal server error");
     }
 };
   
@@ -200,10 +187,8 @@ exports.deleteComment = async (req, res) => {
   
       const post = await posts.findById(postId);
       if (!post) {
-        return res.status(404).json({ error: "Post not found" });
+        return res.status(404).json("Post not found");
       }
-  
-      // Find the comment index
       const commentIndex = post.comments.findIndex(
         (comment) => 
           comment._id.toString() === commentId && 
@@ -211,24 +196,23 @@ exports.deleteComment = async (req, res) => {
       );
   
       if (commentIndex === -1) {
-        return res.status(404).json({ error: "Comment not found or unauthorized" });
+        return res.status(404).json("Comment not found or unauthorized");
       }
-  
-      // Remove the comment
+
       post.comments.splice(commentIndex, 1);
       await post.save();
   
-      res.status(200).json({ message: "Comment deleted successfully", post });
+      res.status(200).json("Comment deleted successfully");
     } catch (error) {
       console.error("Error deleting comment:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json("Internal server error");
     }
 };
   
-// controllers/postController.js
+
 exports.reportPost = async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);
+        const post = await posts.findById(req.params.id);
         if (!post) return res.status(404).json('Post not found');
 
         if (post.reportedBy.includes(req.userId))

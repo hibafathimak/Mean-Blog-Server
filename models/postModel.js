@@ -39,6 +39,7 @@ const postSchema = new mongoose.Schema(
     ],
     reportCount: { type: Number, default: 0 },
     reportedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
+    createdAt: { type: Date, default: Date.now },
   }
 );
 
