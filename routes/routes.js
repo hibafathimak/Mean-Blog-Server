@@ -15,6 +15,8 @@ router.get('/admin/comments',jwtmiddleware, isAdmin, adminController.getAllComme
 router.delete('/admin/post/:id',jwtmiddleware, isAdmin, adminController.deletePost); 
 router.delete('/admin/comment/:postId/:commentId',jwtmiddleware, isAdmin, adminController.deleteComment); 
 router.delete('/admin/user/:id',jwtmiddleware, isAdmin, adminController.deleteUser);
+router.get('/reported-posts', jwtmiddleware, isAdmin, adminController.getAllReportedPosts);
+
 
 // User Routes
 
@@ -35,5 +37,11 @@ router.post('/:postId/like', jwtmiddleware, postController.likePost);
 router.post('/:postId/unlike', jwtmiddleware, postController.unlikePost);
 router.post('/:postId/comment', jwtmiddleware, postController.addComment);
 router.delete('/:postId/comment/:commentId', jwtmiddleware, postController.deleteComment);
+
+// Messages Routes
+
+router.get('/messages', postController.featuredPost);
+router.post('/messages/:id', jwtmiddleware, postController.likePost);
+router.delete('/messages/delete/:id', jwtmiddleware, postController.removePost);
 
 module.exports = router;
