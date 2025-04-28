@@ -40,8 +40,8 @@ router.delete('/:postId/comment/:commentId', jwtmiddleware, postController.delet
 
 // Messages Routes
 
-router.get('/messages', postController.featuredPost);
+router.get('/messages',jwtmiddleware,isAdmin, postController.featuredPost);
 router.post('/messages/:id', jwtmiddleware, postController.likePost);
-router.delete('/messages/delete/:id', jwtmiddleware, postController.removePost);
+router.delete('/messages/delete/:id', jwtmiddleware,isAdmin, postController.removePost);
 
 module.exports = router;
