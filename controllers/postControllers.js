@@ -108,10 +108,10 @@ exports.featuredPost = async (req, res) => {
 
 exports.likePost = async (req, res) => {
     try {
-      const { postId } = req.params;
+      const { id } = req.params;
       const userId = req.userId; 
 
-      const post = await posts.findById(postId);
+      const post = await posts.findById(id);
       if (!post) {
         return res.status(404).json("Post not found");
       }
@@ -133,10 +133,10 @@ exports.likePost = async (req, res) => {
   
 exports.unlikePost = async (req, res) => {
     try {
-      const { postId } = req.params;
+      const { id } = req.params;
       const userId = req.userId;
   
-      const post = await posts.findById(postId);
+      const post = await posts.findById(id);
       if (!post) {
         return res.status(404).json("Post not found");
       }
@@ -153,7 +153,7 @@ exports.unlikePost = async (req, res) => {
   
 exports.addComment = async (req, res) => {
     try {
-      const { postId } = req.params;
+      const { id } = req.params;
       const { comment } = req.body;
       const userId = req.userId;
   
@@ -161,7 +161,7 @@ exports.addComment = async (req, res) => {
         return res.status(400).json("Comment cannot be empty");
       }
   
-      const post = await posts.findById(postId);
+      const post = await posts.findById(id);
       if (!post) {
         return res.status(404).json("Post not found");
       }

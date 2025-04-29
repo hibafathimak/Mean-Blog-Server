@@ -7,6 +7,7 @@ const userController = require('../controllers/userControllers');
 const isAdmin  = require('../middlewares/isAdminMiddleware');
 const jwtmiddleware = require('../middlewares/jwtMiddleware');
 const upload = require('../middlewares/multerMiddleware');
+const messageController = require('../controllers/messageControllers')
 
 // Admin Routes
 router.get('/admin/users',jwtmiddleware, isAdmin, adminController.getAllUsers);
@@ -33,15 +34,15 @@ router.get('/posts/:id', postController.getPostById);
 router.put('/update/:id', jwtmiddleware, upload.single('coverImage'), postController.updatePost);
 router.delete('/delete/:id', jwtmiddleware, postController.removePost);
 router.get('/featured/random', postController.featuredPost);
-router.post('/:postId/like', jwtmiddleware, postController.likePost);
-router.post('/:postId/unlike', jwtmiddleware, postController.unlikePost);
-router.post('/:postId/comment', jwtmiddleware, postController.addComment);
-router.delete('/:postId/comment/:commentId', jwtmiddleware, postController.deleteComment);
+router.post('/:id/like', jwtmiddleware, postController.likePost);
+router.post('/:id/unlike', jwtmiddleware, postController.unlikePost);
+router.post('/:id/comment', jwtmiddleware, postController.addComment);
+router.delete('/delete/:postId/:commentId', jwtmiddleware, postController.deleteComment);
 
 // Messages Routes
 
-router.get('/messages',jwtmiddleware,isAdmin, postController.featuredPost);
-router.post('/messages/:id', jwtmiddleware, postController.likePost);
-router.delete('/messages/delete/:id', jwtmiddleware,isAdmin, postController.removePost);
+router.get('/messages',jwtmiddleware,isAdmin, messageController.getMessages);
+router.post('/messages', messageController.createMessage);
+router.delete('/messages/delete/:id', jwtmiddleware,isAdmin, messageController.deleteMessage);
 
 module.exports = router;
