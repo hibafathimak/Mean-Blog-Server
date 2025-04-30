@@ -3,6 +3,8 @@ const posts = require('../models/postModel')
 
 exports.createPost = async (req, res) => {
     try {
+        console.log("Inside createPost");
+
         const { title, content, category, tags } = req.body;
         const coverImage = req.file.filename
         if (!title || !content || !category || !tags || !coverImage) {
@@ -12,17 +14,44 @@ exports.createPost = async (req, res) => {
             title,
             content,
             category,
-            tags,
+            tags: typeof tags === 'string' ? tags.split(',') : tags,
             coverImage,
             author: req.userId,
         });
         await newPost.save();
         res.status(201).json("Post Created Successfully!!");
     } catch (error) {
+        console.log(error)
         res.status(500).json(error);
     }
 };
+exports.updatePost = async (req, res) => {
+    console.log("Inside updatePost");
+    const { id } = req.params
+    const userId = req.userId;
+    if (!id || !userId) {
+        return res.status(400).json("PostId and userId is required");
+    }
+    const { title, content,category , tags ,coverImage } = req.body;
 
+    const reUploadImage = req.file ? req.file.filename : coverImage;
+    try {
+        const updatedPost = await posts.findByIdAndUpdate(
+            { _id: id },
+            {
+                title,
+                content,
+                tags: typeof tags === 'string' ? tags.split(',') : tags,
+                category,
+                coverImage: reUploadImage,
+            },
+            { new: true }
+        );
+        res.status(200).json("Post Updation Successfull!!");
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
 
 exports.getAllPosts = async (req, res) => {
     try {
@@ -51,35 +80,18 @@ exports.getPostById = async (req, res) => {
 };
 
 
-exports.updatePost = async (req, res) => {
-    console.log("Inside updatePost");
-    const { id } = req.params
-    const userId = req.userId;
-    if (!id || !userId) {
-        return res.status(400).json("PostId and userId is required");
-    }
-    const { title, content,category , tags ,coverImage } = req.body;
 
-    const reUploadImage = req.file ? req.file.filename : coverImage;
+
+exports.getUserPosts = async (req, res) => {
     try {
-        const updatedPost = await posts.findByIdAndUpdate(
-            { _id: id },
-            {
-                title,
-                content,
-                coverImage: reUploadImage,
-                tags,
-                author: userId,
-            },
-            { new: true }
-        );
-        res.status(200).json("Post Updation Successfull!!");
+    const {userId} = req.userId;
+      const blogs = await posts.find({ user: userId }).sort({ createdAt: -1 });
+      res.status(200).json(blogs);
     } catch (error) {
-        res.status(500).json(error);
+      console.error(error);
+      res.status(500).json('Failed to fetch user blogs.');
     }
-};
-
-
+  };
 
 
 exports.removePost = async (req, res) => {

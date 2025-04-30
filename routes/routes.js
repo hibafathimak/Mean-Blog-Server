@@ -11,7 +11,7 @@ const messageController = require('../controllers/messageControllers')
 
 // Admin Routes
 router.get('/admin/users',jwtmiddleware, isAdmin, adminController.getAllUsers);
-router.get('/admin/posts',jwtmiddleware, isAdmin, adminController.getAllPosts); 
+router.get('/admin/posts',jwtmiddleware, isAdmin, adminController.getPosts); 
 router.get('/admin/comments',jwtmiddleware, isAdmin, adminController.getAllComments); 
 router.delete('/admin/post/:id',jwtmiddleware, isAdmin, adminController.deletePost); 
 router.delete('/admin/comment/:postId/:commentId',jwtmiddleware, isAdmin, adminController.deleteComment); 
@@ -29,8 +29,9 @@ router.put('/profile', jwtmiddleware, upload.single('profilePic'), userControlle
 // Post Routes
 
 router.post('/create-post', jwtmiddleware, upload.single('coverImage'), postController.createPost);
-router.get('/posts', postController.getAllPosts);
-router.get('/posts/:id', postController.getPostById);
+router.get('/all-posts', postController.getAllPosts);
+router.get('/user-posts',jwtmiddleware, postController.getUserPosts);
+router.get('/posts/:id',jwtmiddleware, postController.getPostById);
 router.put('/update/:id', jwtmiddleware, upload.single('coverImage'), postController.updatePost);
 router.delete('/delete/:id', jwtmiddleware, postController.removePost);
 router.get('/featured/random', postController.featuredPost);

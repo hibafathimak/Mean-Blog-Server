@@ -5,25 +5,25 @@ const postSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim: true,
+
     },
     content: {
       type: String,
       required: true,
     },
+    category: {
+      type: String,
+    },
+    tags: [String],
     coverImage: {
       type: String,
     },
+
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'users',
       required: true,
     },
-    category: {
-      type: String,
-      trim: true,
-    },
-    tags: [String],
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,

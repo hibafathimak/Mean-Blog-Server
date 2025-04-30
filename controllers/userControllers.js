@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 exports.registerUser = async (req, res) => {
     try {
         const { username, email, password } = req.body;
+        console.log(username, email, password)
         if (!username || !email || !password) {
             return res.status(400).json('All fields are required');
         }
@@ -26,6 +27,7 @@ exports.registerUser = async (req, res) => {
             return res.status(201).json('User registered successfully');
         }
     } catch (error) {
+        console.log(error)
         return res.status(500).json(error);
     }
 };
@@ -56,7 +58,7 @@ exports.loginUser = async (req, res) => {
 
 exports.getUserProfile = async (req, res) => {
     try {
-        const user = await users.findById(req.userId);
+        const user = await users.findById(req.userId).select('-password');
         if (!user) {
             return res.status(404).json('User not found');
         } 
@@ -70,8 +72,9 @@ exports.getUserProfile = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
     try {
         const { username, email, bio } = req.body;
-        const uploadedProfilePic = req.file?req.file.filename:profilePic
         const existingUser = await users.findOne({ email });
+        const uploadedProfilePic = req.file?req.file.filename:existingUser.profilePic
+
         if (existingUser && existingUser._id.toString() !== req.userId) {
              res.status(400).json('Email is already in use by another user');
         }
@@ -84,19 +87,16 @@ exports.updateUserProfile = async (req, res) => {
                 profilePic: uploadedProfilePic
             },
             { new: true }
-        ).select('-password');
+        );
 
         if (!updatedUser) {
              res.status(404).json('User not found' );
         }
 
-        return res.status(200).json({
-            message: 'Profile updated successfully',
-            user: updatedUser
-        });
+        return res.status(200).json('Profile updated successfully',);
 
     } catch (error) {
-        console.error('Update profile error:', error);
+        console.error(error);
         res.status(500).json('Internal server error');
     }
 };

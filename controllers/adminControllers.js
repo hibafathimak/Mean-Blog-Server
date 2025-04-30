@@ -2,7 +2,7 @@ const Users = require('../models/userModel');
 const Posts = require('../models/postModel'); 
 
 
-exports.getAllPosts = async (req, res) => {
+exports.getPosts = async (req, res) => {
   try {
     const allPosts = await Posts.find().populate('author', 'username email');
     res.status(200).json(allPosts);
