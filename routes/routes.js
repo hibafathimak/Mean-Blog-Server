@@ -35,10 +35,10 @@ router.get('/posts/:id',jwtmiddleware, postController.getPostById);
 router.put('/update/:id', jwtmiddleware, upload.single('coverImage'), postController.updatePost);
 router.delete('/delete/:id', jwtmiddleware, postController.removePost);
 router.get('/featured/random', postController.featuredPost);
-router.post('/:id/like', jwtmiddleware, postController.likePost);
-router.post('/:id/unlike', jwtmiddleware, postController.unlikePost);
+router.post('/:id/likeorUnlike', jwtmiddleware, postController.likeorUnlikePost);
 router.post('/:id/comment', jwtmiddleware, postController.addComment);
 router.delete('/delete/:postId/:commentId', jwtmiddleware, postController.deleteComment);
+router.post('/post/report/:id',jwtmiddleware,postController.reportPost)
 
 // Messages Routes
 

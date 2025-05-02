@@ -68,7 +68,6 @@ exports.getUserProfile = async (req, res) => {
     }
 };
 
-
 exports.updateUserProfile = async (req, res) => {
     try {
         const { username, email, bio } = req.body;

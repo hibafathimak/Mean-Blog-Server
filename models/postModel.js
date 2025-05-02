@@ -1,4 +1,4 @@
-const  mongoose = require('mongoose') ;
+const mongoose = require('mongoose');
 
 const postSchema = new mongoose.Schema(
   {
@@ -37,11 +37,15 @@ const postSchema = new mongoose.Schema(
         createdAt: { type: Date, default: Date.now },
       }
     ],
-    reportCount: { type: Number, default: 0 },
-    reportedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
+    reports: [
+      {
+        count: Number,
+        reportedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' }
+      }
+    ],
     createdAt: { type: Date, default: Date.now },
   }
 );
 
 const posts = mongoose.model('posts', postSchema);
-module.exports =posts
+module.exports = posts
