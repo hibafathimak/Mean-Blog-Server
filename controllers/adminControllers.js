@@ -1,5 +1,6 @@
 const Users = require('../models/userModel'); 
 const Posts = require('../models/postModel'); 
+const posts = require('../models/postModel');
 
 
 exports.getPosts = async (req, res) => {
@@ -95,16 +96,18 @@ exports.deleteUser = async (req, res) => {
 
 exports.getAllReportedPosts = async (req, res) => {
   try {
-    const reportedPosts = await Posts.find({ reportCount: { $gt: 0 } })
-      .sort({ reportCount: -1 }); 
+    const reportedPosts = await posts.find({}, { reports: 1, _id: 0 });
 
-    if (reportedPosts.length === 0) {
+    if (!reportedPosts.length) {
       return res.status(404).json('No reported posts found');
     }
 
     res.status(200).json(reportedPosts);
+
   } catch (error) {
-    console.error('Error fetching reported posts:', error);
+    console.error(error);
     res.status(500).json('Error fetching reported posts');
   }
 };
+
+

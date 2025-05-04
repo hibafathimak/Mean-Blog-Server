@@ -115,7 +115,6 @@ exports.removePost = async (req, res) => {
 }
 
 exports.featuredPost = async (req, res) => {
-  console.log("Inside featuredPostController");
   try {
     const featuredPosts = await posts.find().populate('author', 'username profilePic').limit(9);
     res.status(200).json(featuredPosts)
