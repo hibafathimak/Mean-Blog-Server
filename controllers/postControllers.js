@@ -217,27 +217,20 @@ exports.reportPost = async (req, res) => {
     const post = await posts.findById(req.params.id);
     if (!post) return res.status(404).json('Post not found');
 
-    // Check if user already reported the post
-    const existingReport = post.reports.find(
-      report => report.reportedBy.toString() === req.userId
-    );
-
-    if (existingReport) {
+    const alreadyReported = post.reports.includes(req.userId);
+    if (alreadyReported) {
       return res.status(400).json('You already reported this post');
     }
 
-    // Add a new report entry
-    post.reports.push({
-      Count: 1,
-      reportedBy: req.userId,
-    });
-
+    post.reports.push(req.userId);
     await post.save();
+
     res.status(200).json('Post reported');
   } catch (error) {
     console.error('Error reporting post:', error);
     res.status(500).json('Error reporting post');
   }
 };
+
 
 

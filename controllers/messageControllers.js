@@ -17,9 +17,10 @@ const createMessage = async (req, res) => {
 // Get all messages
 const getMessages = async (req, res) => {
     try {
-        const messages = await messages.find();
-        res.status(200).json(messages);
+        const allMessages = await messages.find();
+        res.status(200).json(allMessages);
     } catch (error) {
+        console.log(error)
         res.status(500).json('Error fetching messages');
     }
 };

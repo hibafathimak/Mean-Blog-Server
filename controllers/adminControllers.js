@@ -16,7 +16,7 @@ exports.getPosts = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await Users.find().select('-password');
+    const users = await Users.find({role:"user"}).select('-password');
     res.status(200).json(users);
   } catch (error) {
     console.error('Get users error:', error);
@@ -39,7 +39,6 @@ exports.getAllComments = async (req, res) => {
         createdAt: comment.createdAt
       }))
     );
-
     res.status(200).json(allComments);
   } catch (error) {
     console.error('Get comments error:', error);
@@ -94,20 +93,16 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-exports.getAllReportedPosts = async (req, res) => {
+exports.getReportedPostCount = async (req, res) => {
   try {
-    const reportedPosts = await posts.find({}, { reports: 1, _id: 0 });
+    const count = await posts.countDocuments({ reports: { $exists: true, $ne: [] } });
 
-    if (!reportedPosts.length) {
-      return res.status(404).json('No reported posts found');
-    }
-
-    res.status(200).json(reportedPosts);
-
+    res.status(200).json({ reportedPostCount: count });
   } catch (error) {
-    console.error(error);
-    res.status(500).json('Error fetching reported posts');
+    console.error('Error getting reported post count:', error);
+    res.status(500).json('Error getting reported post count');
   }
 };
+
 
 

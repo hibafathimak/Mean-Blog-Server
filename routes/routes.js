@@ -16,7 +16,7 @@ router.get('/admin/comments',jwtmiddleware, isAdmin, adminController.getAllComme
 router.delete('/admin/post/:id',jwtmiddleware, isAdmin, adminController.deletePost); 
 router.delete('/admin/comment/:postId/:commentId',jwtmiddleware, isAdmin, adminController.deleteComment); 
 router.delete('/admin/user/:id',jwtmiddleware, isAdmin, adminController.deleteUser);
-router.get('/reported-posts', jwtmiddleware, isAdmin, adminController.getAllReportedPosts);
+router.get('/reported-posts', jwtmiddleware, isAdmin, adminController.getReportedPostCount);
 
 
 // User Routes
