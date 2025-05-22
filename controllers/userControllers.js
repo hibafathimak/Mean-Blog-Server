@@ -76,7 +76,6 @@ exports.updateUserProfile = async (req, res) => {
         if (existingUser && existingUser._id.toString() !== req.userId) {
            return  res.status(400).json('Email is already in use by another user');
         }
-        let uploadedProfilePic =  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF5-3YjBcXTqKUlOAeUUtuOLKgQSma2wGG1g&s";
 
         
         if (req.file?.path) {
