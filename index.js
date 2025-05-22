@@ -3,15 +3,11 @@ const express = require('express')
 const cors = require('cors')
 require('./config/DB')
 const router = require('./routes/routes')
-const {connectCloudinary} = require('./config/cloudinaryConfig');
 
 const serverApp = express()
 serverApp.use(cors())
 serverApp.use(express.json())
 serverApp.use(router)
-serverApp.use('/uploads', express.static('./uploads'))
-
-connectCloudinary();
 
 const PORT = 3000 || process.env.PORT
 
