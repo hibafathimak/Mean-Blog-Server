@@ -81,10 +81,10 @@ exports.getPostById = async (req, res) => {
   }
   try {
     const post = await posts.findById(id)
-    .populate('author', 'username profilePic') // Populate author fields
+    .populate('author', 'username profilePic') 
     .populate({
-      path: 'comments.user', // Populate the 'userId' field in 'comments'
-      select: 'username profilePic' // Select only the fields you need (username and profilePic)
+      path: 'comments.user', 
+      select: 'username profilePic' 
     }).exec();
 
     if (!post) {
