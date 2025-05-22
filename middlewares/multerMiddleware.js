@@ -1,16 +1,15 @@
-const multer = require('multer')
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinaryConfig');
 
-const storage = multer.diskStorage({
-    destination:(req,file,callback)=>{
-        callback(null,"./uploads")  
-    },
-    filename:(req,file,callback)=>{
-        callback(null,`image-${Date.now()}-${file.originalname}`) 
-    }
-})
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'oneblog', 
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+  },
+});
 
-const multerMiddleware = multer({
-    storage
-})
+const upload = multer({ storage });
 
-module.exports = multerMiddleware
+module.exports = upload;

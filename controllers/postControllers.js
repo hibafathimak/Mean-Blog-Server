@@ -1,21 +1,27 @@
 const posts = require('../models/postModel')
-
+const { v2: cloudinary } = require('cloudinary');
 
 exports.createPost = async (req, res) => {
   try {
     console.log("Inside createPost");
 
     const { title, content, category, tags } = req.body;
-    const coverImage = req.file.filename
+    const coverImage = req.file?.path
     if (!title || !content || !category || !tags || !coverImage) {
       return res.status(400).json("All fields are required");
+    }
+    let imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGh5WFH8TOIfRKxUrIgJZoDCs1yvQ4hIcppw&s";
+
+    if (req.file?.path) {
+      const result = await cloudinary.uploader.upload(req.file.path, { resource_type: "auto" });
+      imageUrl = result.secure_url;
     }
     const newPost = new posts({
       title,
       content,
       category,
       tags: typeof tags === 'string' ? tags.split(',') : tags,
-      coverImage,
+      coverImage: imageUrl,
       author: req.userId,
     });
     await newPost.save();
@@ -34,8 +40,13 @@ exports.updatePost = async (req, res) => {
   }
   const { title, content, category, tags, coverImage } = req.body;
 
-  const reUploadImage = req.file ? req.file.filename : coverImage;
   try {
+    let newCoverImage = coverImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGh5WFH8TOIfRKxUrIgJZoDCs1yvQ4hIcppw&s";
+
+    if (req.file?.path) {
+      const result = await cloudinary.uploader.upload(req.file.path, { resource_type: "auto" });
+      newCoverImage = result.secure_url;
+    }
     const updatedPost = await posts.findByIdAndUpdate(
       { _id: id },
       {
@@ -43,7 +54,7 @@ exports.updatePost = async (req, res) => {
         content,
         tags: typeof tags === 'string' ? tags.split(',') : tags,
         category,
-        coverImage: reUploadImage,
+        coverImage: newCoverImage,
       },
       { new: true }
     );

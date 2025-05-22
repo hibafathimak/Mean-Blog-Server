@@ -37,11 +37,11 @@ exports.loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-             res.status(400).json('Email and Password are required');
+           return  res.status(400).json('Email and Password are required');
         }
         const user = await users.findOne({ email });
         if (!user) {
-             res.status(400).json('Invalid credentials');
+            return res.status(400).json('Invalid credentials');
         } else {
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
@@ -72,10 +72,18 @@ exports.updateUserProfile = async (req, res) => {
     try {
         const { username, email, bio } = req.body;
         const existingUser = await users.findOne({ email });
-        const uploadedProfilePic = req.file?req.file.filename:existingUser.profilePic
 
         if (existingUser && existingUser._id.toString() !== req.userId) {
-             res.status(400).json('Email is already in use by another user');
+           return  res.status(400).json('Email is already in use by another user');
+        }
+        let uploadedProfilePic =  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF5-3YjBcXTqKUlOAeUUtuOLKgQSma2wGG1g&s";
+
+        
+        if (req.file?.path) {
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                resource_type: "auto",
+            });
+            uploadedProfilePic = result.secure_url;
         }
         const updatedUser = await users.findByIdAndUpdate(
             req.userId,
