@@ -5,7 +5,6 @@ const  cloudinary  = require('../config/cloudinaryConfig');
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'oneblog',
     allowed_formats: ['jpg', 'png', 'jpeg'],
   },
 });
